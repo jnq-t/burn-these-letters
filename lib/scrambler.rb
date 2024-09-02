@@ -18,9 +18,8 @@ class Scrambler
     if text.empty?
       scrambler_interface
     else
-      words = text.split(" ")
-      map = make_map(words)
-      apply_map(map, words)
+      words = text.scan(/[\w'-]+|[[:punct:]]+/)
+      make_map(words)
     end
   end
 
