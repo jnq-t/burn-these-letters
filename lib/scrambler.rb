@@ -16,12 +16,7 @@ class Scrambler
     if text.empty?
       scrambler_interface
     else
-      words = text.scan(/[\w'-]+|[[:punct:]]+/)
-      unique = words.uniq.reject do |str|
-        str.match?(/[^a-zA-Z0-9]/) # excludes non-alphanumeric characters from the map
-      end
-      map = make_map(unique)
-      apply_map(map,words)
+      scramble_by_word(text)
     end
   end
 
@@ -72,7 +67,7 @@ class Scrambler
   end
 
   def scramble_by_custom_subgroup(text:, subgrouped_array: [])
-    words = text.split(" ")
+    words = get_words_with_punctuation(text)
     map = arrays_to_map(subgrouped_array)
     apply_map(map,words)
   end
@@ -83,6 +78,15 @@ class Scrambler
     words = words_and_punctuation.reject { |word| word.in? delimiters }
     map = make_map(words)
     apply_map(map, words_and_punctuation)
+  end
+
+  def scramble_by_word(text)
+    words = get_words_with_punctuation
+    unique = words.uniq.reject do |str|
+      str.match?(/[^a-zA-Z0-9]/) # excludes non-alphanumeric characters from the map
+    end
+    map = make_map(unique)
+    apply_map(map,words)
   end
 
   # helper methods
@@ -109,5 +113,9 @@ class Scrambler
   def arrays_to_map(arrays)
     arr_of_hashes = arrays.map { |a| make_map(a)}.flatten
     arr_of_hashes.reduce({},:merge)
+  end
+
+  def get_words_with_punctuation(text)
+    text.scan(/[\w'-]+|[[:punct:]]+/)
   end
 end
