@@ -22,27 +22,23 @@ private
   # not built into the options, that mapping goes here)
   # we actually don't need these options, but maybe
   # i'll want to use them eventually
-  def interface_with_options
-    def words
-      scrambler_interface(:words)
-    end
-    def sentences
-      scrambler_interface(:sentences)
-    end
-  end
+  # def interface_with_options
+  #   def words
+  #     scrambler_interface(:words)
+  #   end
+  #   def sentences
+  #     scrambler_interface(:sentences)
+  #   end
+  # end
 
-  def scrambler_interface(option)
+  def scrambler_interface
     Class.new do
-      def initialize(option: nil)
-        @option = option
-      end
-
       def by_part_of_speech(text)
-        scramble_by_part_of_speech(text, @option)
+        scramble_by_part_of_speech(text)
       end
 
       def by_custom_subgroup(text:, subgrouped_array: {})
-        scramble_by_custom_subgroup(text, subgrouped_array, @option)
+        scramble_by_custom_subgroup(text, subgrouped_array)
       end
     end
   end
@@ -54,6 +50,10 @@ private
 
   def scramble_by_custom_subgroup(text:, subgrouped_array: {})
     "subgorup #{text} : #{subgrouped_array}"
+  end
+
+  def scramble_by_sentance(text)
+    puts "sentance: #{text}"
   end
 
   def general_scramble(arrays, words)
