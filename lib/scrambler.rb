@@ -18,7 +18,9 @@ class Scrambler
     if text.empty?
       scrambler_interface
     else
-      general_scramble(text, [])
+      words = text.split(" ")
+      map = make_map(words)
+      apply_map(map, words)
     end
   end
 
@@ -69,18 +71,14 @@ class Scrambler
   end
 
   def scramble_by_custom_subgroup(text:, subgrouped_array: [])
-    general_scramble(text, subgrouped_array)
+    words = text.split(" ")
+    map = arrays_to_map(subgrouped_array)
+    apply_map(map,words)
   end
 
   def scramble_by_sentence(text:)
     words = text.split(".")
-    map = make_sentence_map(words)
-    apply_map(map, words)
-  end
-
-  def general_scramble(text, arrays)
-    words = text.split(" ")
-    map = arrays.first.is_a?(Array) ? arrays_to_map(arrays) : make_map(words)
+    map = shuffle_and_map(words)
     apply_map(map, words)
   end
 
@@ -88,14 +86,10 @@ class Scrambler
   #
   # creates a random mapping of each word in the list to another word in the list
   def make_map(words)
-     unique = words.uniq.select do |str|
-       alphanumeric?(str) # excludes non-alphanumeric characters from the map
+    unique = words.uniq.reject do |str|
+      str.match?(/[^a-zA-Z0-9]/) # excludes non-alphanumeric characters from the map
     end
      shuffle_and_map(unique)
-  end
-
-  def make_sentence_map(words)
-    shuffle_and_map(words.uniq)
   end
 
   def shuffle_and_map(unique_word_array)
@@ -119,9 +113,5 @@ class Scrambler
   def arrays_to_map(arrays)
     arr_of_hashes = arrays.map { |a| make_map(a)}.flatten
     arr_of_hashes.reduce({},:merge)
-  end
-
-  def alphanumeric?(str)
-    str.match?(/[^a-zA-Z0-9]/)
   end
 end
