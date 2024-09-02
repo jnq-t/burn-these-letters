@@ -1,4 +1,4 @@
-class LanguageScrambler
+class Scrambler
   # API ID [String] (Your API ID to the Oxford English Dictionary API )
   # API KEY [String] (Your API ID to the Oxford English Dictionary API)
   ## https://developer.oxforddictionaries.com/documentation/getting_started
@@ -8,17 +8,18 @@ class LanguageScrambler
     @api_key = api_key
   end
 
+  attr_reader :api_id, :api_key
+
 # params Text [String] (the complete text you wish to scramble)
 # params Subgrouped Array [Array of Arrays] (if you wish to include a subgrouping that's
-  def scramble(text: nil)
+  def scramble(text: "")
     if text.empty?
       scrambler_interface
     else
-      general_scramble([], text)
+      general_scramble(text, [])
     end
   end
 
-private
   # not built into the options, that mapping goes here)
   # we actually don't need these options, but maybe
   # i'll want to use them eventually
@@ -31,40 +32,49 @@ private
   #   end
   # end
 
-  def scrambler_interface
-    Class.new do
-      def by_part_of_speech(text:)
-        if @api_id.nil? || @api_key.nil?
-          puts "you must provide OED Credentials to use the part of speech option"
-          return
-        end
-
-        scramble_by_part_of_speech(text)
-      end
-
-      def by_custom_subgroup(text:, subgrouped_array:)
-        scramble_by_custom_subgroup(text, subgrouped_array)
-      end
+  class Interface
+    def initialize(scrambler)
+      @scrambler = scrambler
     end
+
+    def by_part_of_speech(text:)
+      if @scrambler.api_id.nil? || @scrambler.api_key.nil?
+        puts "you must provide OED Credentials to use the part of speech option"
+        return
+      end
+
+      @scrambler.send(:scramble_by_part_of_speech, text: text)
+    end
+
+    def by_custom_subgroup(text:, subgrouped_array:)
+      @scrambler.send(:scramble_by_custom_subgroup, text: text, subgrouped_array: subgrouped_array)
+    end
+
+    def by_sentence(text:)
+      @scrambler.send(:scramble_by_sentence, text: text)
+    end
+  end
+
+  def scrambler_interface
+    Interface.new(self)
   end
 
   def scramble_by_part_of_speech(text)
     puts "breaking parts of speech: #{text}: stub"
-    general_scramble(text,nil)
+    general_scramble(text,[])
   end
 
   def scramble_by_custom_subgroup(text:, subgrouped_array: [])
     general_scramble(text, subgrouped_array)
   end
 
-  def scramble_by_sentance(text:)
-    puts "sentance: #{text}"
-    subgrouped_array = text.split(".")
-    general_scramble(text,subgrouped_array)
+  def scramble_by_sentence(text:)
+    puts "sentence: #{text}"
+    general_scramble(text.split("."), [])
   end
 
   def general_scramble(text, arrays)
-    words = text.split(" ")
+    words = text.is_a? String ? text.split(" ") : text
     map = arrays.first.is_a? Array ? arrays_to_map(arrays) : make_map(words)
     applied = apply_map(map, words)
     applied.join(' ')
@@ -85,7 +95,7 @@ private
   def apply_map(map, words)
     words.reduce([]) do |acc, word|
       map_value = map[word]
-      acc << (map_value.present? ? map_value : word)
+      acc << (!map_value.nil? ? map_value : word)
       acc
     end
   end
