@@ -1,5 +1,5 @@
-# TODO words = [TAKE YOUR TEXT AND HAVE AN LML BREAK IT INTO AN ARRAY. TELL IT TO LEAVE THE PUNCTION IN
-# PLACE AND TO RESPECT THE ORDER OF WORDS]
+
+
 
 # creates a random mapping of each word in the list to another word in the list
 def make_map(words)
