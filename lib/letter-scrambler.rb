@@ -69,15 +69,15 @@ class Scrambler
   end
 
   def scramble_by_sentence(text:)
-    puts "sentence: #{text}"
-    general_scramble(text.split("."), [])
+    words = text.split(".")
+    map = make_sentence_map(words)
+    apply_map(map, words)
   end
 
   def general_scramble(text, arrays)
-    words = text.is_a?(String) ? text.split(" ") : text
+    words = text.split(" ")
     map = arrays.first.is_a?(Array) ? arrays_to_map(arrays) : make_map(words)
-    applied = apply_map(map, words)
-    applied.join(' ')
+    apply_map(map, words)
   end
 
   # helper methods
@@ -87,17 +87,26 @@ class Scrambler
      unique = words.uniq.reject do |str|
       str.match?(/[^a-zA-Z0-9]/) # excludes non-alphanumeric characters from the map
     end
-     shuffled = unique.shuffle
-     unique.each_with_index.reduce({}) { |acc, (w, i)| acc[w] = shuffled[i]; acc}
+     shuffle_and_map(unique)
+  end
+
+  def make_sentence_map(words)
+    shuffle_and_map(words.uniq)
+  end
+
+  def shuffle_and_map(unique_word_array)
+    shuffled = unique_word_array.shuffle
+    unique_word_array.each_with_index.reduce({}) { |acc, (w, i)| acc[w] = shuffled[i]; acc}
   end
 
   # iterates through the list of words and transforms them into their randomly mapped counterpart
   def apply_map(map, words)
-    words.reduce([]) do |acc, word|
+    applied =words.reduce([]) do |acc, word|
       map_value = map[word]
       acc << (!map_value.nil? ? map_value : word)
       acc
     end
+    applied.join(' ')
   end
 
   # takes a list of lists, maps each one on istself, and then compbines them into one big map
