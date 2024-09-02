@@ -1,18 +1,18 @@
-class LetterScrambler
+class LanguageScrambler
   # API ID [String] (Your API ID to the Oxford English Dictionary API )
   # API KEY [String] (Your API ID to the Oxford English Dictionary API)
   ## https://developer.oxforddictionaries.com/documentation/getting_started
 
-  def initialize(api_id:, api_key:)
+  def initialize(api_id: nil, api_key: nil)
     @api_id = api_id
     @api_key = api_key
   end
 
 # params Text [String] (the complete text you wish to scramble)
 # params Subgrouped Array [Array of Arrays] (if you wish to include a subgrouping that's
-  def scramble(text: "")
+  def scramble(text: nil)
     if text.empty?
-      interface_with_options
+      scrambler_interface
     else
       general_scramble([], text)
     end
@@ -33,11 +33,16 @@ private
 
   def scrambler_interface
     Class.new do
-      def by_part_of_speech(text)
+      def by_part_of_speech(text:)
+        if @api_id.nil? || @api_key.nil?
+          puts "you must provide OED Credentials to use the part of speech option"
+          return
+        end
+
         scramble_by_part_of_speech(text)
       end
 
-      def by_custom_subgroup(text:, subgrouped_array: {})
+      def by_custom_subgroup(text:, subgrouped_array:)
         scramble_by_custom_subgroup(text, subgrouped_array)
       end
     end
@@ -45,19 +50,22 @@ private
 
   def scramble_by_part_of_speech(text)
     puts "breaking parts of speech: #{text}: stub"
-    text.split(" ")
+    general_scramble(text,nil)
   end
 
-  def scramble_by_custom_subgroup(text:, subgrouped_array: {})
-    "subgorup #{text} : #{subgrouped_array}"
+  def scramble_by_custom_subgroup(text:, subgrouped_array: [])
+    general_scramble(text, subgrouped_array)
   end
 
-  def scramble_by_sentance(text)
+  def scramble_by_sentance(text:)
     puts "sentance: #{text}"
+    subgrouped_array = text.split(".")
+    general_scramble(text,subgrouped_array)
   end
 
-  def general_scramble(arrays, words)
-    map = arrays_to_map(arrays)
+  def general_scramble(text, arrays)
+    words = text.split(" ")
+    map = arrays.first.is_a? Array ? arrays_to_map(arrays) : make_map(words)
     applied = apply_map(map, words)
     applied.join(' ')
   end
