@@ -1,4 +1,6 @@
 class Scrambler
+  # require "../helpers/oed_api_wrapper"
+
   # API ID [String] (Your API ID to the Oxford English Dictionary API )
   # API KEY [String] (Your API ID to the Oxford English Dictionary API)
   ## https://developer.oxforddictionaries.com/documentation/getting_started
@@ -60,8 +62,12 @@ class Scrambler
   end
 
   def scramble_by_part_of_speech(text)
-    puts "breaking parts of speech: #{text}: stub"
-    general_scramble(text,[])
+    # DOING
+    words = text.split(" ").select { |str| alphanumeric?(str) }
+
+
+
+
   end
 
   def scramble_by_custom_subgroup(text:, subgrouped_array: [])
@@ -84,8 +90,8 @@ class Scrambler
   #
   # creates a random mapping of each word in the list to another word in the list
   def make_map(words)
-     unique = words.uniq.reject do |str|
-      str.match?(/[^a-zA-Z0-9]/) # excludes non-alphanumeric characters from the map
+     unique = words.uniq.select do |str|
+       alphanumeric?(str) # excludes non-alphanumeric characters from the map
     end
      shuffle_and_map(unique)
   end
@@ -115,5 +121,9 @@ class Scrambler
   def arrays_to_map(arrays)
     arr_of_hashes = arrays.map { |a| make_map(a)}.flatten
     arr_of_hashes.reduce({},:merge)
+  end
+
+  def alphanumeric?(str)
+    str.match?(/[^a-zA-Z0-9]/)
   end
 end
