@@ -20,18 +20,6 @@ class Scrambler
     end
   end
 
-  # not built into the options, that mapping goes here)
-  # we actually don't need these options, but maybe
-  # i'll want to use them eventually
-  # def interface_with_options
-  #   def words
-  #     scrambler_interface(:words)
-  #   end
-  #   def sentences
-  #     scrambler_interface(:sentences)
-  #   end
-  # end
-
   class Interface
     def initialize(scrambler)
       @scrambler = scrambler
