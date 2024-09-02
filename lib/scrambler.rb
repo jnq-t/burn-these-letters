@@ -1,6 +1,4 @@
 class Scrambler
-  # require "../helpers/oed_api_wrapper"
-
   # API ID [String] (Your API ID to the Oxford English Dictionary API )
   # API KEY [String] (Your API ID to the Oxford English Dictionary API)
   ## https://developer.oxforddictionaries.com/documentation/getting_started
@@ -19,7 +17,11 @@ class Scrambler
       scrambler_interface
     else
       words = text.scan(/[\w'-]+|[[:punct:]]+/)
-      make_map(words)
+      unique = words.uniq.reject do |str|
+        str.match?(/[^a-zA-Z0-9]/) # excludes non-alphanumeric characters from the map
+      end
+      map = make_map(unique)
+      apply_map(map,words)
     end
   end
 
@@ -76,24 +78,19 @@ class Scrambler
   end
 
   def scramble_by_sentence(text:)
-    words = text.split(".")
-    map = shuffle_and_map(words)
-    apply_map(map, words)
+    delimiters = [".","!","?"]
+    words_and_punctuation = text.split(/(\.|\?|!)/)
+    words = words_and_punctuation.reject { |word| word.in? delimiters }
+    map = make_map(words)
+    apply_map(map, words_and_punctuation)
   end
 
   # helper methods
   #
   # creates a random mapping of each word in the list to another word in the list
-  def make_map(words)
-    unique = words.uniq.reject do |str|
-      str.match?(/[^a-zA-Z0-9]/) # excludes non-alphanumeric characters from the map
-    end
-     shuffle_and_map(unique)
-  end
-
-  def shuffle_and_map(unique_word_array)
-    shuffled = unique_word_array.shuffle
-    unique_word_array.each_with_index.reduce({}) { |acc, (w, i)| acc[w] = shuffled[i]; acc}
+  def make_map(unique_words)
+    shuffled = unique_words.shuffle
+    unique_words.each_with_index.reduce({}) { |acc, (w, i)| acc[w] = shuffled[i]; acc}
   end
 
   # iterates through the list of words and transforms them into their randomly mapped counterpart
