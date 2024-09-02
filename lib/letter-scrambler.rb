@@ -74,8 +74,8 @@ class Scrambler
   end
 
   def general_scramble(text, arrays)
-    words = text.is_a? String ? text.split(" ") : text
-    map = arrays.first.is_a? Array ? arrays_to_map(arrays) : make_map(words)
+    words = text.is_a?(String) ? text.split(" ") : text
+    map = arrays.first.is_a?(Array) ? arrays_to_map(arrays) : make_map(words)
     applied = apply_map(map, words)
     applied.join(' ')
   end
