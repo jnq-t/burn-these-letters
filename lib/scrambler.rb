@@ -62,12 +62,10 @@ class Scrambler
   end
 
   def scramble_by_part_of_speech(text)
-    # DOING
-    words = text.split(" ").select { |str| alphanumeric?(str) }
+    # TODO
+    # words = text.split(" ").select { |str| alphanumeric?(str) }
 
-
-
-
+    puts "this is still WIP. Until it's ready you can enter your own sorted list by parts of speech using the .by_custom_subgroup method"
   end
 
   def scramble_by_custom_subgroup(text:, subgrouped_array: [])
