@@ -34,7 +34,7 @@ scrambler.scramble.by_sentence(:text => "Hello, world! Hello, moon! This is a lo
 => "this is a longer sentence! hello, world!  hello, moon!"
 
 ```
-### .scramble.by_custom_subgroup(:text => YOUR INPUT TEXT, :subgrouped_array => [Array of [Sub Arrays]) 
+### .scramble.by_custom_subgroup(:text => YOUR INPUT TEXT, :groupings => [Array of [Sub Arrays]) 
 - scrambles your input by word, but adhering to what ever custom grouping you passed in.
 ```
 groupings = [
@@ -42,7 +42,7 @@ groupings = [
   ["world", "moon", "sentence"], # nouns
   ["This is a longer"] # custom phrase you want to keep intact 
 ]
-scrambler.scramble.by_custom_subgroup(:text => "Hello, world! Hello, moon! This is a longer sentence!", :subgrouped_array => groupings)
+scrambler.scramble.by_custom_subgroup(:text => "Hello, world! Hello, moon! This is a longer sentence!", :groupings => groupings)
 => " hello, moon! hello, sentence! this is a longer world!"
 => " hello, world! hello, moon! this is a longer sentence!"
 => " hello, moon! hello, world! this is a longer sentence!"
