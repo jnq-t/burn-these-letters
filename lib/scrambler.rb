@@ -20,6 +20,8 @@ class Scrambler
     end
   end
 
+private
+
   class Interface
     def initialize(scrambler)
       @scrambler = scrambler
@@ -42,8 +44,6 @@ class Scrambler
       @scrambler.send(:scramble_by_sentence, text: text)
     end
   end
-
-private
 
   def scrambler_interface
     Interface.new(self)
