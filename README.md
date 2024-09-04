@@ -24,20 +24,23 @@ scrambler = Scrambler.new
 - breaks up your input by word, leaving punctuation (mostly) in place, and scrambles everything else.
 ```
 scrambler.scramble(:text => "Hello, world! Hello, moon! This is a longer sentence!")
-=> "is, world! is, hello! this longer a sentence moon!"
-=> "is, this! is, world! a sentence longer hello moon!"
-=> "this, is! this, sentence! world longer a hello moon!"
 ```
+  ```
+  => "is, world! is, hello! this longer a sentence moon!"
+  => "is, this! is, world! a sentence longer hello moon!"
+  => "this, is! this, sentence! world longer a hello moon!"
+  ```  
 
 ### .scramble.by_sentence(:text => YOUR INPUT TEXT)
 - breaks up your input by sentence (wherever it see's a `.`, `?`, `!`) and scrambles those.
 ```
 scrambler.scramble.by_sentence(:text => "Hello, world! Hello, moon! This is a longer sentence!")
-=> "hello, moon! hello, world!  this is a longer sentence!"
-=> "this is a longer sentence!  hello, moon! hello, world!"
-=> "this is a longer sentence! hello, world!  hello, moon!"
-
 ```
+  ```
+  => "hello, moon! hello, world!  this is a longer sentence!"
+  => "this is a longer sentence!  hello, moon! hello, world!"
+  => "this is a longer sentence! hello, world!  hello, moon!"
+  ```
 ### .scramble.by_custom_subgroup(:text => YOUR INPUT TEXT, :groupings => [Array of [Sub Arrays]) 
 - scrambles your input by word, but adhering to what ever custom grouping you passed in.
 ```
@@ -47,11 +50,14 @@ groupings = [
   ["This is a longer"] # custom phrase you want to keep intact 
 ]
 scrambler.scramble.by_custom_subgroup(:text => "Hello, world! Hello, moon! This is a longer sentence!", :groupings => groupings)
-=> " hello, moon! hello, sentence! this is a longer world!"
-=> " hello, world! hello, moon! this is a longer sentence!"
-=> " hello, moon! hello, world! this is a longer sentence!"
-
 ```
+
+  ```
+  => " hello, moon! hello, sentence! this is a longer world!"
+  => " hello, world! hello, moon! this is a longer sentence!"
+  => " hello, moon! hello, world! this is a longer sentence!"
+  
+  ```
 
 # WIP 
 - scramble.by_part_of_speech is coming as soon as I get the [OED API](https://developer.oxforddictionaries.com/documentation) hooked up.
