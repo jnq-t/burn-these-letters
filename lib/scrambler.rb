@@ -11,7 +11,6 @@ class Scrambler
   attr_reader :api_id, :api_key
 
 # params Text [String] (the complete text you wish to scramble)
-# params Subgrouped Array [Array of Arrays] (if you wish to include a subgrouping that's
   def scramble(text: "")
     if text.empty?
       scrambler_interface
@@ -36,8 +35,8 @@ private
       @scrambler.send(:scramble_by_part_of_speech, text: text)
     end
 
-    def by_custom_subgroup(text:, subgrouped_array:)
-      @scrambler.send(:scramble_by_custom_subgroup, text: text, subgrouped_array: subgrouped_array)
+    def by_custom_subgroup(text:, groupings:)
+      @scrambler.send(:scramble_by_custom_subgroup, text: text, groupings: groupings)
     end
 
     def by_sentence(text:)
@@ -56,10 +55,10 @@ private
     puts "this is still WIP. Until it's ready you can enter your own sorted list by parts of speech using the .by_custom_subgroup method"
   end
 
-  def scramble_by_custom_subgroup(text:, subgrouped_array: [])
-    substrings = subgrouped_array.select { |a| a.first.split(" ").length > 1 }.flatten
+  def scramble_by_custom_subgroup(text:, groupings: [])
+    substrings = groupings.select { |a| a.first.split(" ").length > 1 }.flatten
     words = get_words_with_punctuation(text, substrings: substrings)
-    map = arrays_to_map(subgrouped_array)
+    map = arrays_to_map(groupings)
     apply_map(map,words)
   end
 
