@@ -43,6 +43,8 @@ class Scrambler
     end
   end
 
+private
+
   def scrambler_interface
     Interface.new(self)
   end
@@ -55,7 +57,8 @@ class Scrambler
   end
 
   def scramble_by_custom_subgroup(text:, subgrouped_array: [])
-    words = get_words_with_punctuation(text)
+    substrings = subgrouped_array.select { |a| a.first.split(" ").length > 1 }
+    words = get_words_with_punctuation(text, substrings: substrings)
     map = arrays_to_map(subgrouped_array)
     apply_map(map,words)
   end
@@ -63,13 +66,13 @@ class Scrambler
   def scramble_by_sentence(text:)
     delimiters = [".","!","?"]
     words_and_punctuation = text.split(/(\.|\?|!)/)
-    words = words_and_punctuation.reject { |word| word.in? delimiters }
+    words = words_and_punctuation.reject { |word| delimiters.include?(word) }
     map = make_map(words)
     apply_map(map, words_and_punctuation)
   end
 
   def scramble_by_word(text)
-    words = get_words_with_punctuation
+    words = get_words_with_punctuation(text)
     unique = words.uniq.reject do |str|
       str.match?(/[^a-zA-Z0-9]/) # excludes non-alphanumeric characters from the map
     end
@@ -87,12 +90,12 @@ class Scrambler
 
   # iterates through the list of words and transforms them into their randomly mapped counterpart
   def apply_map(map, words)
-    applied =words.reduce([]) do |acc, word|
+    applied = words.reduce([]) do |acc, word|
       map_value = map[word]
-      acc << (!map_value.nil? ? map_value : word)
+      acc << (!map_value.nil? ? " " + map_value : word).downcase
       acc
     end
-    applied.join(' ')
+    applied.join
   end
 
   # takes a list of lists, maps each one on istself, and then compbines them into one big map
@@ -103,7 +106,10 @@ class Scrambler
     arr_of_hashes.reduce({},:merge)
   end
 
-  def get_words_with_punctuation(text)
-    text.scan(/[\w'-]+|[[:punct:]]+/)
+  def get_words_with_punctuation(text, substrings: "")
+    substring = substrings.first.first
+    regex = Regexp.new("(#{Regexp.escape(substring)})|([\\w'-]+|[[:punct:]]+)")
+    output = text.scan(regex).map(&:compact).flatten
+    output
   end
 end
