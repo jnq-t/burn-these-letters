@@ -6,7 +6,7 @@ The scrambler generates a random enocoding of each token (word, sentance, other 
 ## Get Started 
 - [download ruby](https://www.ruby-lang.org/en/documentation/installation/)
 - [clone this repo](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-- navigate into the `burn-these-letters-code` directory you cloned and exectute `irb -r ./lib/scrambler.rb`
+- navigate into the `burn-these-letters-code` directory you cloned and exectute `irb -r ./scrambler/scrambler.rb`
 - Initialize the scrambler
 ```
 scrambler = Scrambler.new
