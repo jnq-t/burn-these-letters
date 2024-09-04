@@ -57,7 +57,7 @@ private
   end
 
   def scramble_by_custom_subgroup(text:, subgrouped_array: [])
-    substrings = subgrouped_array.select { |a| a.first.split(" ").length > 1 }
+    substrings = subgrouped_array.select { |a| a.first.split(" ").length > 1 }.flatten
     words = get_words_with_punctuation(text, substrings: substrings)
     map = arrays_to_map(subgrouped_array)
     apply_map(map,words)
@@ -95,7 +95,7 @@ private
       acc << (!map_value.nil? ? " " + map_value : word).downcase
       acc
     end
-    applied.join
+    applied.join.lstrip.gsub("  ", " ") # some whitespace handling
   end
 
   # takes a list of lists, maps each one on istself, and then compbines them into one big map
@@ -106,10 +106,17 @@ private
     arr_of_hashes.reduce({},:merge)
   end
 
-  def get_words_with_punctuation(text, substrings: "")
-    substring = substrings.first.first
-    regex = Regexp.new("(#{Regexp.escape(substring)})|([\\w'-]+|[[:punct:]]+)")
-    output = text.scan(regex).map(&:compact).flatten
-    output
+  def get_words_with_punctuation(text, substrings: [])
+    regex = Regexp.new("#{substring_exp(substrings)}([\\w'-]+|[[:punct:]]+)")
+    text.scan(regex).map(&:compact).flatten
   end
+end
+
+def substring_exp(substrings_array)
+  return "" if substrings_array.empty?
+
+  sorted_substrings = substrings_array.sort_by(&:length).reverse
+  # Create a regex pattern that matches any of the substrings or the original tokenization
+  substring = sorted_substrings.map { |s| Regexp.escape(s) }.join('|')
+  "(#{substring})|"
 end
