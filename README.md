@@ -2,7 +2,7 @@
 The scrambler is an Interactive Ruby tool that generates semi-randomized text using only words and sentences from your input text. The tool suports default and custom groupings. 
 
 ## Get Started 
-- [Download ruby](https://www.ruby-lang.org/en/documentation/installation/)
+- [download ruby](https://www.ruby-lang.org/en/documentation/installation/)
 - [clone this repo](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
 - navigate to the directory your cloned this project into and exectute `irb -r ./lib/scrambler.rb`
 - Initialize the scrambler
