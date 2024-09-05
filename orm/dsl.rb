@@ -13,13 +13,17 @@ module Orm
       attr_reader :model_instance
 
       def find_table
-        # Psych.parse_file(load_path)
         YAML.load_file(load_path)
       end
 
       def save
         ensure_file_structure
         write_files
+      end
+
+      def load
+        data = YAML.load_file(load_path)
+        set_attributes(data)
       end
 
     private
@@ -29,6 +33,14 @@ module Orm
         create_model_dir
         create_table_dir
         create_backup_dir
+      end
+
+      def set_attributes(data_hash)
+        data_hash.keys.each do |key|
+          model_instance.class.module_eval { attr_accessor key}
+          model_instance.send("#{key}=", data_hash[key])
+        end
+        model_instance
       end
 
       ##
@@ -89,6 +101,8 @@ module Orm
         File.open("#{path_to_table_dir}/backups/#{digest}.yml", 'w') do |file|
           file.write(values.to_yaml)
         end
+
+        find_table # return the table from memory.
       end
     end
   end

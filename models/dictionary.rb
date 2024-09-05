@@ -29,10 +29,19 @@ module Models
     ##
     # I/O
 
+    ##
+    # returns the values from the given table name as a hash
     def self.find_dictionary(name:)
       instance = self.new(name: name)
       ::Orm::Dsl::Interface.new(model_instance: instance).find_table
     end
+
+    ##
+    # loads the latest
+    def load
+      ::Orm::Dsl::Interface.new(model_instance: self).load
+    end
+
 
     def save
       ::Orm::Dsl::Interface.new(model_instance: self).save
@@ -44,7 +53,6 @@ module Models
     def model_dir_name
       self.class.name.split("::").last.split(/(?=[A-Z])/).join("_").downcase.pluralize
     end
-
 
 
     ##
