@@ -1,9 +1,0 @@
----
-:db_version: 0.0.1
-:verbs:
-- go
-- do
-- be
-:nouns:
-- cats
-- dogs

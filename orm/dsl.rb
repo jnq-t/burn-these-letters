@@ -18,6 +18,10 @@ module Orm
       def table_name
         "Ariel"
       end
+
+      def message
+        "trying out metadata"
+      end
     end
 
     def initialize(model_instance: GenericModel.new)
@@ -27,33 +31,63 @@ module Orm
     attr_reader :model_instance
 
     def save
-      model_instance.values.to_json
       ensure_file_structure
-    end
-
-  private
-
-    def ensure_file_structure
-      create_db_directory
-      create_model_directory
       write_hash_to_file
     end
 
-    def create_db_directory
+  # private
+
+    def ensure_file_structure
+      create_db_dir
+      create_model_dir
+      create_table_dir
+      create_backup_dir
+    end
+
+    def create_db_dir
       Dir.mkdir("./db") unless Dir.exist?("./db")
     end
 
-    def create_model_directory
-      Dir.mkdir("./db/#{model_instance.model_dir_name}") unless Dir.exist?("./db/#{model_instance.model_dir_name}")
+    def create_model_dir
+      Dir.mkdir(path_to_model_dir) unless Dir.exist?(path_to_model_dir)
+    end
+    
+    def create_table_dir
+      Dir.mkdir(path_to_table_dir) unless Dir.exist?(path_to_table_dir)
+    end
+    
+    def create_backup_dir
+      path = "#{path_to_table_dir}/backups"
+      Dir.mkdir(path) unless Dir.exist?(path)
+    end
+    
+    def path_to_model_dir
+      "./db/#{model_instance.model_dir_name}"
     end
 
-    def path_to_table
-      "./db/#{model_instance.model_dir_name}/#{model_instance.table_name}.yml"
+    def path_to_table_dir
+      "#{path_to_model_dir}/#{model_instance.table_name.downcase}"
     end
 
+    # should maybe just make a new file each change. then we basically get version control for free.
     def write_hash_to_file
-      values = {:db_version => DB_VERSION}.merge model_instance.values
-      File.open(path_to_table, 'w') do |file|
+      headers = {
+        "metadata" =>
+          {
+            :db_version => DB_VERSION,
+            :message => model_instance.message
+          }
+      }
+      # overwrite main file
+      values = headers.merge model_instance.values
+      File.open("#{path_to_table_dir}.yml", 'w') do |file|
+        file.write(values.to_yaml)
+      end
+
+      # make backup
+      # TODO add a check here to see if the file is literally identical, and if so to not make another backup
+      digest = Time.now.to_i
+      File.open("#{path_to_table_dir}/backups/#{digest}.yml", 'w') do |file|
         file.write(values.to_yaml)
       end
     end
