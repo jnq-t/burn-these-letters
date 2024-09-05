@@ -52,11 +52,11 @@ module Orm
       end
 
       def path_to_table_dir
-        "#{path_to_model_dir}/#{model_instance.table_name.downcase}"
+        "#{path_to_model_dir}/#{model_instance.name.downcase}"
       end
 
       def load_path
-        "#{path_to_table_dir}/#{model_instance.table_name.downcase}.yml"
+        "#{path_to_table_dir}/#{model_instance.name.downcase}.yml"
       end
 
       ##
@@ -92,7 +92,7 @@ module Orm
         }
         # overwrite main file
         values = headers.merge model_instance.values
-        File.open("#{path_to_table_dir}/#{model_instance.table_name}.yml", 'w') do |file|
+        File.open("#{path_to_table_dir}/#{model_instance.name}.yml", 'w') do |file|
           file.write(values.to_yaml)
         end
 
