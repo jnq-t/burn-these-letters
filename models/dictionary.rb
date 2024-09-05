@@ -45,9 +45,12 @@ module Models
     ##
     # loads the latest
     def load
-      user_wants_to_override?
-      # return if user_wants_to_override?
+      return unless user_wants_to_override?
       ::Orm::Dsl::Interface.new(model_instance: self).load
+    end
+
+    def load_backup(filename:)
+      ::Orm::Dsl::Interface.new(model_instance: self).load_backup(filename)
     end
 
 
@@ -99,7 +102,7 @@ module Models
     end
 
     def missing_keys
-      saved_values = self.class.find_dictionary(:name => name)
+      saved_values = self.class.find_dictionary(:name => name) || interface.load_backup
       saved_values.delete("metadata")
       keys - saved_values.keys
     end

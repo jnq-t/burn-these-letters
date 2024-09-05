@@ -12,8 +12,8 @@ module Orm
 
       attr_reader :model_instance
 
-      def find_table
-        YAML.load_file(load_path)
+      def find_table(filename: nil)
+        YAML.load_file(load_path) if File.exist?(load_path)
       end
 
       def save
@@ -22,8 +22,12 @@ module Orm
       end
 
       def load
-        data = YAML.load_file(load_path)
+        data = YAML.load_file("#{load_path}.yml")
         set_attributes(data)
+      end
+
+      def load_backup(filename)
+        YAML.load_file("#{backup_path}/#{filename}.yml")
       end
 
       def set_attributes(data_hash)
@@ -56,7 +60,11 @@ module Orm
       end
 
       def load_path
-        "#{path_to_table_dir}/#{model_instance.name.downcase}.yml"
+        "#{path_to_table_dir}/#{model_instance.name.downcase}"
+      end
+
+      def backup_path
+        "#{path_to_table_dir}/backups"
       end
 
       ##
@@ -90,6 +98,7 @@ module Orm
               :message => model_instance.message
             }
         }
+
         # overwrite main file
         values = headers.merge model_instance.values
         File.open("#{path_to_table_dir}/#{model_instance.name}.yml", 'w') do |file|
