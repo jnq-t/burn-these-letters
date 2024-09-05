@@ -10,22 +10,19 @@ module Orm
         @model_instance = model_instance
       end
 
-      ##
-      # class methods
+      attr_reader :model_instance
 
       def find_table
         # Psych.parse_file(load_path)
         YAML.load_file(load_path)
       end
 
-      attr_reader :model_instance
-
       def save
         ensure_file_structure
         write_files
       end
 
-      private
+    private
 
       def ensure_file_structure
         create_db_dir
