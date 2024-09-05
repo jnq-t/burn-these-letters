@@ -20,7 +20,7 @@ module Models
     def initialize(name:, message: "", values: {})
       @table_name = name
       @message = message
-      @values = values
+      @values = values.any? ? values : {"verbs": ["go", "do", "be"], "nouns": ["cats", "dogs"] }
     end
 
     attr_reader :table_name, :message, :values
@@ -29,17 +29,22 @@ module Models
     ##
     # I/O
 
-    ##
-    # DSL methods (should probably be included)
-
-    # TODO add better pluralize
-    def model_dir_name
-      self.class.name.split("::").last.split(/(?=[A-Z])/).join("_").downcase.pluralize
+    def self.find_dictionary(name:)
+      instance = self.new(name: name)
+      ::Orm::Dsl::Interface.new(model_instance: instance).find_table
     end
 
     def save
       ::Orm::Dsl::Interface.new(model_instance: self).save
     end
+
+
+    ##
+    #
+    def model_dir_name
+      self.class.name.split("::").last.split(/(?=[A-Z])/).join("_").downcase.pluralize
+    end
+
 
 
     ##
@@ -62,7 +67,6 @@ module Models
     end
 
     def keys
-
     end
 
   end

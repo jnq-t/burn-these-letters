@@ -5,13 +5,17 @@ module Orm
       require "yaml"
 
       DB_VERSION = "0.0.1"
-      #
-      # def self.find
-      # end
 
-
-      def initialize(model_instance: GenericModel.new)
+      def initialize(model_instance:)
         @model_instance = model_instance
+      end
+
+      ##
+      # class methods
+
+      def find_table
+        # Psych.parse_file(load_path)
+        YAML.load_file(load_path)
       end
 
       attr_reader :model_instance
@@ -19,10 +23,6 @@ module Orm
       def save
         ensure_file_structure
         write_files
-      end
-
-      def find
-        path_to_table_dir
       end
 
       private
