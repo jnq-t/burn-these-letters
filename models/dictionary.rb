@@ -21,9 +21,20 @@ module Models
       @table_name = name
       @message = message
       @values = values.any? ? values : {"verbs": ["go", "do", "be"], "nouns": ["cats", "dogs"] }
+      @interface = ::Orm::Dsl::Interface.new(model_instance: self)
+      set_attributes!
     end
 
-    attr_reader :table_name, :message, :values
+    def set_attributes!
+      values.keys.each do |key|
+        self.class.module_eval { attr_accessor key}
+        self.send("#{key}=", values[key])
+      end
+    end
+
+
+
+    attr_reader :table_name, :message, :values, :interface
 
 
     ##

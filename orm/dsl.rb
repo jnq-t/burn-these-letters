@@ -26,6 +26,14 @@ module Orm
         set_attributes(data)
       end
 
+      def set_attributes(data_hash)
+        data_hash.keys.each do |key|
+          model_instance.class.module_eval { attr_accessor key}
+          model_instance.send("#{key}=", data_hash[key])
+        end
+        model_instance
+      end
+
     private
 
       def ensure_file_structure
@@ -35,13 +43,6 @@ module Orm
         create_backup_dir
       end
 
-      def set_attributes(data_hash)
-        data_hash.keys.each do |key|
-          model_instance.class.module_eval { attr_accessor key}
-          model_instance.send("#{key}=", data_hash[key])
-        end
-        model_instance
-      end
 
       ##
       # file paths
