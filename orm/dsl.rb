@@ -35,6 +35,10 @@ module Orm
       write_files
     end
 
+    def find(table_name)
+      path_to_table_dir
+    end
+
   private
 
     def ensure_file_structure
@@ -89,7 +93,7 @@ module Orm
       }
       # overwrite main file
       values = headers.merge model_instance.values
-      File.open("#{path_to_table_dir}.yml", 'w') do |file|
+      File.open("#{path_to_table_dir}/#{model_instance.table_name}.yml", 'w') do |file|
         file.write(values.to_yaml)
       end
 
