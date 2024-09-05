@@ -15,30 +15,26 @@ module Models
       ## returns a given dictionary
     end
 
-    def initialize(name:)
+    ## param Name (the name of your model and your table)
+    # param Message (message metadata for your dictionary. Think of this like a commit message)
+    def initialize(name:, message: "", values: {})
       @table_name = name
+      @message = message
+      @values = values
     end
+
+    attr_reader :table_name, :message, :values
+
 
     ##
     # I/O
 
     ##
     # DSL methods (should probably be included)
-    def values
-      {"verbs": ["go", "do", "be"], "nouns": ["cats", "dogs"] }
-    end
 
     # TODO add better pluralize
     def model_dir_name
       self.class.name.split("::").last.split(/(?=[A-Z])/).join("_").downcase.pluralize
-    end
-
-    def table_name
-      "Ariel"
-    end
-
-    def message
-      "trying out metadata"
     end
 
     def save
