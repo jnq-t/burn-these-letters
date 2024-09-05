@@ -3,6 +3,7 @@ module Models
     ##
     # files
     require_relative '../orm/dsl.rb'
+    require_relative '../helpers/key_symbolizer.rb'
 
     ##
     # dependencies
@@ -17,36 +18,20 @@ module Models
 
     ## param Name (the name of your model and your table)
     # param Message (message metadata for your dictionary. Think of this like a commit message)
-    def initialize(name:, message: "", values: {})
+    def initialize(name:, values: {})
       @name = name
-      @message = message
-      @values = values.any? ? values : {"verbs": ["go", "do", "be"], "nouns": ["cats", "dogs"] }
-      @interface = ::Orm::Dsl::Interface.new(model_instance: self)
-      set_attributes!
+      @values = KeySymbolizer.call(values)
     end
 
-
-
-
-
-    attr_reader :name, :message, :values, :interface
-
-
-    ##
-    # I/O
-
-    ##
-    # returns the values from the given table name as a hash
-    def self.find_dictionary(name:)
-      instance = self.new(name: name)
-      ::Orm::Dsl::Interface.new(model_instance: instance).find_table
-    end
+    attr_reader :name
+    attr_accessor :values
 
     ##
     # loads the latest
     def load
-      return unless user_wants_to_override?
-      ::Orm::Dsl::Interface.new(model_instance: self).load
+
+      return unless user_wants_to_continue?
+      interface.load
     end
 
     def load_backup(filename:)
@@ -54,10 +39,10 @@ module Models
     end
 
 
-    def save
-      ::Orm::Dsl::Interface.new(model_instance: self).save
+    def save(message: "")
+      interface.save(message)
+      # ::Orm::Dsl::Interface.new(model_instance: self).save(message)
     end
-
 
     ##
     #
@@ -78,8 +63,11 @@ module Models
       # TODO
     end
 
-    def add_value
-      # TODO
+    ##
+    # will overwrite existing definitions
+    def set_definition!(k, v)
+      definition = KeySymbolizer.call({k => v})
+      values.merge!(definition)
     end
 
     def keys
@@ -88,8 +76,8 @@ module Models
 
   private
 
-    def user_wants_to_override?
-      return false if missing_keys.empty?
+    def user_wants_to_continue?
+      return true if missing_keys.empty?
       missing_values = values.select { |k,_| missing_keys.include?(k) }
       if missing_values.any?
         puts "you have the following unsaved values in the current dictionary: #{missing_values}. Consider saving first."
@@ -102,7 +90,8 @@ module Models
     end
 
     def missing_keys
-      saved_values = self.class.find_dictionary(:name => name) || interface.load_backup
+      saved_values = interface.find_table
+      return [] unless saved_values.present?
       saved_values.delete("metadata")
       keys - saved_values.keys
     end
@@ -132,6 +121,10 @@ module Models
         self.class.module_eval { attr_accessor key}
         self.send("#{key}=", values[key])
       end
+    end
+
+    def interface
+      ::Orm::Dsl::Interface.new(:model_instance => self)
     end
   end
 end

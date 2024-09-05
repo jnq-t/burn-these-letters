@@ -16,26 +16,34 @@ module Orm
         YAML.load_file(load_path) if File.exist?(load_path)
       end
 
-      def save
+      def save(message)
         ensure_file_structure
-        write_files
+        write_files(message)
       end
 
       def load
-        data = YAML.load_file("#{load_path}.yml")
+        if !File.exist?(load_path)
+          puts "no files found for this dictionary"
+          return
+        end
+        data = YAML.load_file("#{load_path}")
         set_attributes(data)
+        model_instance
       end
 
       def load_backup(filename)
-        YAML.load_file("#{backup_path}/#{filename}.yml")
+        filename = filename.is_a?(Integer) ? "#{filename}.yml" : filename
+        filename = filename.split("/").last
+        YAML.load_file("#{backup_path}/#{filename}")
       end
 
       def set_attributes(data_hash)
+        puts data_hash
         data_hash.keys.each do |key|
           model_instance.class.module_eval { attr_accessor key}
           model_instance.send("#{key}=", data_hash[key])
+          model_instance.values = data_hash
         end
-        model_instance
       end
 
     private
@@ -60,7 +68,7 @@ module Orm
       end
 
       def load_path
-        "#{path_to_table_dir}/#{model_instance.name.downcase}"
+        "#{path_to_table_dir}/#{model_instance.name.downcase}.yml"
       end
 
       def backup_path
@@ -90,14 +98,14 @@ module Orm
       ##
       # I/O
 
-      def write_files
+      def write_files(message)
         headers = {
           "metadata" =>
             {
               :db_version => DB_VERSION,
-              :message => model_instance.message
             }
         }
+        headers["metadata"].merge("message" => message) if message.present?
 
         # overwrite main file
         values = headers.merge model_instance.values
