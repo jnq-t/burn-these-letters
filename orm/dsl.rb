@@ -32,10 +32,10 @@ module Orm
 
     def save
       ensure_file_structure
-      write_hash_to_file
+      write_files
     end
 
-  # private
+  private
 
     def ensure_file_structure
       create_db_dir
@@ -43,6 +43,21 @@ module Orm
       create_table_dir
       create_backup_dir
     end
+
+    ##
+    # file paths
+
+    def path_to_model_dir
+      "./db/#{model_instance.model_dir_name}"
+    end
+
+    def path_to_table_dir
+      "#{path_to_model_dir}/#{model_instance.table_name.downcase}"
+    end
+
+
+    ##
+    # file structure
 
     def create_db_dir
       Dir.mkdir("./db") unless Dir.exist?("./db")
@@ -60,17 +75,11 @@ module Orm
       path = "#{path_to_table_dir}/backups"
       Dir.mkdir(path) unless Dir.exist?(path)
     end
-    
-    def path_to_model_dir
-      "./db/#{model_instance.model_dir_name}"
-    end
 
-    def path_to_table_dir
-      "#{path_to_model_dir}/#{model_instance.table_name.downcase}"
-    end
+    ##
+    # I/O
 
-    # should maybe just make a new file each change. then we basically get version control for free.
-    def write_hash_to_file
+    def write_files
       headers = {
         "metadata" =>
           {
