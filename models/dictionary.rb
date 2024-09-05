@@ -10,14 +10,7 @@ module Models
     require 'active_support/inflector'
 
     ##
-    # class methods
-
-    def self.find
-      ## returns a given dictionary
-    end
-
-    ## param Name (the name of your model and your table)
-    # param Message (message metadata for your dictionary. Think of this like a commit message)
+    # param Name (the name of your model and your table)
     def initialize(name:, values: {})
       @name = name
       @values = KeySymbolizer.call(values)
@@ -29,37 +22,25 @@ module Models
     ##
     # loads the latest
     def load
-
       return unless user_wants_to_continue?
       interface.load
     end
 
+    ##
+    # loads a specific backup
     def load_backup(filename:)
       ::Orm::Dsl::Interface.new(model_instance: self).load_backup(filename)
     end
 
-
+    ##
+    # saves the current state
+    # param Message (message metadata for your dictionary. Think of this like a commit message)
     def save(message: "")
       interface.save(message)
-      # ::Orm::Dsl::Interface.new(model_instance: self).save(message)
-    end
-
-    ##
-    #
-    def model_dir_name
-      self.class.name.split("::").last.split(/(?=[A-Z])/).join("_").downcase.pluralize
     end
 
     def import_yml
       # imports entire yml file
-      # TODO
-    end
-
-    def add_grouping
-      # TODO
-    end
-
-    def add_key
       # TODO
     end
 
@@ -70,11 +51,30 @@ module Models
       values.merge!(definition)
     end
 
+    def add_to_definition(k,v)
+      definition = KeySymbolizer.call(k)
+      if !keys.include? definition
+        puts "no definition matching that key found. Use #set_definition! instead."
+        return self
+      end
+      values[definition] += v
+    end
+
     def keys
       values.keys
     end
 
-  private
+    ##
+    # TODO this method is required for the DSL integration
+    # This should maybe be included in an adapter class that's inherited
+    # Same thing with the initializer methods
+    # Anything that's required for the DSL should be encapsulated
+    # maybe in a module that can be included in a model_base class and inhereted among all models
+    def model_dir_name
+      self.class.name.split("::").last.split(/(?=[A-Z])/).join("_").downcase.pluralize
+    end
+
+    private
 
     def user_wants_to_continue?
       return true if missing_keys.empty?
