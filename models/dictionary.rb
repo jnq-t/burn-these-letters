@@ -29,7 +29,7 @@ module Models
     ##
     # loads a specific backup
     def load_backup(filename:)
-      ::Orm::Dsl::Interface.new(model_instance: self).load_backup(filename)
+      interface.load_backup(filename)
     end
 
     ##

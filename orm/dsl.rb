@@ -36,6 +36,7 @@ module Orm
         filename = filename.split("/").last
         YAML.load_file("#{backup_path}/#{filename}")
       end
+    private
 
       def set_attributes(data_hash)
         puts data_hash
@@ -45,8 +46,6 @@ module Orm
           model_instance.values = data_hash
         end
       end
-
-    private
 
       def ensure_file_structure
         create_db_dir
