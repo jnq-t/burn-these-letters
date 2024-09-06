@@ -1,11 +1,5 @@
 class Scrambler
-  # API ID [String] (Your API ID to the Oxford English Dictionary API )
-  # API KEY [String] (Your API ID to the Oxford English Dictionary API)
-  ## https://developer.oxforddictionaries.com/documentation/getting_started
-
-  def initialize(api_id: nil, api_key: nil)
-    @api_id = api_id
-    @api_key = api_key
+  def initialize(dictionary: "")
   end
 
   attr_reader :api_id, :api_key
@@ -26,15 +20,6 @@ private
       @scrambler = scrambler
     end
 
-    def by_part_of_speech(text:)
-      if @scrambler.api_id.nil? || @scrambler.api_key.nil?
-        puts "you must provide OED Credentials to use the part of speech option"
-        return
-      end
-
-      @scrambler.send(:scramble_by_part_of_speech, text: text)
-    end
-
     def by_custom_subgroup(text:, groupings:)
       @scrambler.send(:scramble_by_custom_subgroup, text: text, groupings: groupings)
     end
@@ -46,13 +31,6 @@ private
 
   def scrambler_interface
     Interface.new(self)
-  end
-
-  def scramble_by_part_of_speech(text)
-    # TODO
-    # words = text.split(" ").select { |str| alphanumeric?(str) }
-
-    puts "this is still WIP. Until it's ready you can enter your own sorted list by parts of speech using the .by_custom_subgroup method"
   end
 
   def scramble_by_custom_subgroup(text:, groupings: [])
