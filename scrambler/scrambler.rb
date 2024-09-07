@@ -1,31 +1,30 @@
 class Scrambler
-  def initialize(dictionary: "")
+  def initialize(text: "")
+    @text = text
   end
 
-  attr_reader :api_id, :api_key
+  attr_reader :text
 
 # params Text [String] (the complete text you wish to scramble)
-  def scramble(text: "")
-    if text.empty?
-      scrambler_interface
-    else
-      scramble_by_word(text)
-    end
+  def scramble
+    scrambler_interface
   end
-
-private
 
   class Interface
     def initialize(scrambler)
       @scrambler = scrambler
     end
 
-    def by_custom_subgroup(text:, groupings:)
-      @scrambler.send(:scramble_by_custom_subgroup, text: text, groupings: groupings)
+    def by_word
+      @scrambler.send(:scramble_by_word)
     end
 
-    def by_sentence(text:)
-      @scrambler.send(:scramble_by_sentence, text: text)
+    def by_dictionary(groupings:)
+      @scrambler.send(:scramble_by_custom_subgroup, groupings: groupings)
+    end
+
+    def by_sentence
+      @scrambler.send(:scramble_by_sentence)
     end
   end
 
@@ -33,14 +32,14 @@ private
     Interface.new(self)
   end
 
-  def scramble_by_custom_subgroup(text:, groupings: [])
+  def scramble_by_custom_subgroup(groupings: [])
     substrings = groupings.select { |a| a.first.split(" ").length > 1 }.flatten
-    words = get_words_with_punctuation(text, substrings: substrings)
+    words = get_words_with_punctuation(substrings: substrings)
     map = arrays_to_map(groupings)
     apply_map(map,words)
   end
 
-  def scramble_by_sentence(text:)
+  def scramble_by_sentence
     delimiters = [".","!","?"]
     words_and_punctuation = text.split(/(\.|\?|!)/)
     words = words_and_punctuation.reject { |word| delimiters.include?(word) }
@@ -48,8 +47,8 @@ private
     apply_map(map, words_and_punctuation)
   end
 
-  def scramble_by_word(text)
-    words = get_words_with_punctuation(text)
+  def scramble_by_word
+    words = get_words_with_punctuation
     unique = words.uniq.reject do |str|
       str.match?(/[^a-zA-Z0-9]/) # excludes non-alphanumeric characters from the map
     end
@@ -83,7 +82,7 @@ private
     arr_of_hashes.reduce({},:merge)
   end
 
-  def get_words_with_punctuation(text, substrings: [])
+  def get_words_with_punctuation(substrings: [])
     regex = Regexp.new("#{substring_exp(substrings)}([\\w'-]+|[[:punct:]]+)")
     text.scan(regex).map(&:compact).flatten
   end
