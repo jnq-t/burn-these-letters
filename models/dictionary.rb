@@ -155,9 +155,8 @@ class Dictionary
     gets.chomp.downcase
   end
 
-  # TODO add some error handling here. it's nice to have the attribtues update before we save
   def method_missing(symbol)
-    self.values[symbol]
+    self.values[symbol].presence || "no definitions for '#{symbol}'. set definitions using #set_definition!"
   end
 
   def interface
