@@ -8,7 +8,7 @@ class Scramble
 
 
   def by_dictionary(dictionary)
-    groupings = dictionary.definitions.reduce([]) do |acc,(k,v)|
+    groupings = dictionary.definitions.reduce([]) do |acc,(_,v)|
       acc << v
       acc
     end
