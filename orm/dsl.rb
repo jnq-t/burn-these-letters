@@ -15,6 +15,12 @@ module Orm
 
       attr_reader :model_instance
 
+      def self.where(expression:, model_name:)
+        self.load_all_tables(:model_name => model_name).select do |instance|
+          instance.values.select { |k,v| k == expression.keys.first && v.sort == expression.values.first.sort }.any?
+        end
+      end
+
       def self.list_all_tables(model_name:)
         Dir["./db/#{model_name}/*"].map { |path| path.split("/").last }
       end
@@ -54,7 +60,6 @@ module Orm
     private
 
       def set_attributes(data_hash)
-        puts data_hash
         data_hash.keys.each do |key|
           model_instance.class.module_eval { attr_accessor key}
           model_instance.send("#{key}=", data_hash[key])

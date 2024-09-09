@@ -23,6 +23,22 @@ class Dictionary
   ##
   # class methods
 
+  # TODO add queries by key / value
+
+  def self.by_definition_key(key)
+    self.all.select { |dict| dict.keys.include?(key) }
+  end
+
+  def self.by_definition_value(value)
+    self.all.select do |dict|
+      dict.values.select{ |_,v| v == value }
+    end
+  end
+
+  def self.where(expression)
+    ::Orm::Dsl::Interface.where(expression: expression, :model_name => MODEL_DIR_NAME)
+  end
+
   def self.list_all
     ::Orm::Dsl::Interface.list_all_tables(:model_name => MODEL_DIR_NAME)
   end
@@ -41,7 +57,7 @@ class Dictionary
 
   ##
   # loads a specific backup
-  def load_backup(filename:)
+  def load_backup(filename)
     interface.load_backup(filename)
   end
 
