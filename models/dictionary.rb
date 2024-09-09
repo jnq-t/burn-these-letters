@@ -23,8 +23,6 @@ class Dictionary
   ##
   # class methods
 
-  # TODO add queries by key / value
-
   def self.by_definition_key(key)
     self.all.select { |dict| dict.keys.include?(key) }
   end
@@ -51,6 +49,9 @@ class Dictionary
     ::Orm::Dsl::Interface.load_all_tables(:model_name => MODEL_DIR_NAME)
   end
 
+  def self.first
+    self.all.first
+  end
 
   ##
   # loads the latest
