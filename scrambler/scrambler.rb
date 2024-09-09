@@ -14,8 +14,6 @@ class Scramble
   end
 
   def by_dictionary(dictionary)
-
-
   end
 
   def by_sentence

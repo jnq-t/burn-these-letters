@@ -73,9 +73,11 @@ class Dictionary
     interface.save(message)
   end
 
-  def import_yml
-    # imports entire yml file
-    # TODO
+  # returns the definitons that we actually use for scramlbing
+  def definitions
+    values_memo = values
+    values_memo.delete("metadata")
+    values_memo
   end
 
   ##
