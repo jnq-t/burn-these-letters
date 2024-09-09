@@ -1,8 +1,11 @@
 module Orm
   class Dsl
     class Interface
+      ##
+      # dependencies
       require "json"
       require "yaml"
+      require 'active_support/inflector'
 
       DB_VERSION = "0.0.1"
 
@@ -12,6 +15,18 @@ module Orm
 
       attr_reader :model_instance
 
+      def self.list_all_tables(model_name:)
+        Dir["./db/#{model_name}/*"].map { |path| path.split("/").last }
+      end
+
+      def self.load_all_tables(model_name:)
+        model = "::#{model_name.singularize.titleize}".safe_constantize
+        self.list_all_tables(model_name: model_name ).map do |table_name|
+          model.new(:name => table_name).load
+        end
+      end
+
+      # returns the parsed YAML of the record
       def find_table(filename: nil)
         YAML.load_file(load_path) if File.exist?(load_path)
       end
@@ -104,6 +119,7 @@ module Orm
               :db_version => DB_VERSION,
             }
         }
+
         headers["metadata"].merge("message" => message) if message.present?
 
         # overwrite main file
@@ -113,7 +129,6 @@ module Orm
         end
 
         # make backup
-        # TODO add a check here to see if the file is literally identical, and if so to not make another backup
         digest = Time.now.to_i
         File.open("#{path_to_table_dir}/backups/#{digest}.yml", 'w') do |file|
           file.write(values.to_yaml)

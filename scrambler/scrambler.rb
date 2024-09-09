@@ -1,4 +1,6 @@
 class Scrambler
+  require_relative '../models/dictionary.rb'
+
   def initialize(text: "")
     @text = text
   end
@@ -19,7 +21,7 @@ class Scrambler
       @scrambler.send(:scramble_by_word)
     end
 
-    def by_dictionary(groupings:)
+    def by_dictionary_name(groupings:)
       @scrambler.send(:scramble_by_custom_subgroup, groupings: groupings)
     end
 
