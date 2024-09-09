@@ -80,18 +80,19 @@ class Dictionary
 
   ##
   # will overwrite existing definitions
-  def set_definition!(k, v)
-    definition = KeySymbolizer.call({k => v})
+  def set_definition!(**definition)
+    KeySymbolizer.call(definition)
     values.merge!(definition)
   end
 
-  def add_to_definition(k,v)
-    definition = KeySymbolizer.call(k)
-    if !keys.include? definition
+  def add_to_definition(**definition)
+    definition = KeySymbolizer.call(definition)
+    key = definition.keys.first
+    unless keys.include? key
       puts "no definition matching that key found. Use #set_definition! instead."
       return self
     end
-    values[definition] += v
+    values[key] += definition.values
   end
 
   def keys
@@ -150,6 +151,7 @@ class Dictionary
     gets.chomp.downcase
   end
 
+  # might consider doing this in the DSL, and might also consider using method_missing
   def set_attributes!
     values.keys.each do |key|
       self.class.module_eval { attr_accessor key}

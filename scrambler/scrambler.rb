@@ -1,47 +1,24 @@
-class Scrambler
+class Scramble
   require_relative '../models/dictionary.rb'
-
   def initialize(text: "")
     @text = text
   end
 
   attr_reader :text
 
-# params Text [String] (the complete text you wish to scramble)
-  def scramble
-    scrambler_interface
-  end
-
-  class Interface
-    def initialize(scrambler)
-      @scrambler = scrambler
-    end
-
-    def by_word
-      @scrambler.send(:scramble_by_word)
-    end
-
-    def by_dictionary_name(groupings:)
-      @scrambler.send(:scramble_by_custom_subgroup, groupings: groupings)
-    end
-
-    def by_sentence
-      @scrambler.send(:scramble_by_sentence)
-    end
-  end
-
-  def scrambler_interface
-    Interface.new(self)
-  end
-
-  def scramble_by_custom_subgroup(groupings: [])
+  def by_custom_subgroup(groupings: [])
     substrings = groupings.select { |a| a.first.split(" ").length > 1 }.flatten
     words = get_words_with_punctuation(substrings: substrings)
     map = arrays_to_map(groupings)
     apply_map(map,words)
   end
 
-  def scramble_by_sentence
+  def by_dictionary(dictionary)
+
+
+  end
+
+  def by_sentence
     delimiters = [".","!","?"]
     words_and_punctuation = text.split(/(\.|\?|!)/)
     words = words_and_punctuation.reject { |word| delimiters.include?(word) }
@@ -49,7 +26,7 @@ class Scrambler
     apply_map(map, words_and_punctuation)
   end
 
-  def scramble_by_word
+  def by_word
     words = get_words_with_punctuation
     unique = words.uniq.reject do |str|
       str.match?(/[^a-zA-Z0-9]/) # excludes non-alphanumeric characters from the map
@@ -57,6 +34,8 @@ class Scrambler
     map = make_map(unique)
     apply_map(map,words)
   end
+
+private
 
   # helper methods
   #
@@ -88,13 +67,13 @@ class Scrambler
     regex = Regexp.new("#{substring_exp(substrings)}([\\w'-]+|[[:punct:]]+)")
     text.scan(regex).map(&:compact).flatten
   end
-end
 
-def substring_exp(substrings_array)
-  return "" if substrings_array.empty?
+  def substring_exp(substrings_array)
+    return "" if substrings_array.empty?
 
-  sorted_substrings = substrings_array.sort_by(&:length).reverse
-  # Create a regex pattern that matches any of the substrings or the original tokenization
-  substring = sorted_substrings.map { |s| Regexp.escape(s) }.join('|')
-  "(#{substring})|"
+    sorted_substrings = substrings_array.sort_by(&:length).reverse
+    # Create a regex pattern that matches any of the substrings or the original tokenization
+    substring = sorted_substrings.map { |s| Regexp.escape(s) }.join('|')
+    "(#{substring})|"
+  end
 end
