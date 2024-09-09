@@ -1,19 +1,19 @@
 class Scramble
   require_relative '../models/dictionary.rb'
-  def initialize(text: "")
+  def initialize(text)
     @text = text
   end
 
   attr_reader :text
 
-  def by_custom_subgroup(groupings: [])
-    substrings = groupings.select { |a| a.first.split(" ").length > 1 }.flatten
-    words = get_words_with_punctuation(substrings: substrings)
-    map = arrays_to_map(groupings)
-    apply_map(map,words)
-  end
 
   def by_dictionary(dictionary)
+    groupings = dictionary.definitions.reduce([]) do |acc,(k,v)|
+      acc << v
+      acc
+    end
+
+    by_custom_subgroup(groupings: groupings)
   end
 
   def by_sentence
@@ -52,6 +52,14 @@ private
     end
     applied.join.lstrip.gsub("  ", " ") # some whitespace handling
   end
+
+  def by_custom_subgroup(groupings: [])
+    substrings = groupings.select { |a| a.first.split(" ").length > 1 }.flatten
+    words = get_words_with_punctuation(substrings: substrings)
+    map = arrays_to_map(groupings)
+    apply_map(map,words)
+  end
+
 
   # takes a list of lists, maps each one on istself, and then compbines them into one big map
   # the idea is that you can pass in lists that represent "subgroupings", like words grouped by their

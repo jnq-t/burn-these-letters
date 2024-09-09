@@ -85,6 +85,7 @@ class Dictionary
   def set_definition!(**definition)
     KeySymbolizer.call(definition)
     values.merge!(definition)
+    self
   end
 
   def add_to_definition(**definition)
@@ -95,6 +96,7 @@ class Dictionary
       return self
     end
     values[key] += definition.values
+    self
   end
 
   def keys
@@ -153,12 +155,9 @@ class Dictionary
     gets.chomp.downcase
   end
 
-  # might consider doing this in the DSL, and might also consider using method_missing
-  def set_attributes!
-    values.keys.each do |key|
-      self.class.module_eval { attr_accessor key}
-      self.send("#{key}=", values[key])
-    end
+  # TODO add some error handling here. it's nice to have the attribtues update before we save
+  def method_missing(symbol)
+    self.values[symbol]
   end
 
   def interface
