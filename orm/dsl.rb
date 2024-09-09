@@ -6,6 +6,7 @@ module Orm
       require "json"
       require "yaml"
       require 'active_support/inflector'
+      require "pry"
 
       DB_VERSION = "0.0.1"
 
@@ -15,9 +16,26 @@ module Orm
 
       attr_reader :model_instance
 
+      # keys and values must match exactly(though key order doesn't matter)
       def self.where(expression:, model_name:)
+        values = expression.values.first # DRY this up by abstracting the shared logic between this and where any
+        keys = expression.keys.first
         self.load_all_tables(:model_name => model_name).select do |instance|
-          instance.values.select { |k,v| k == expression.keys.first && v.sort == expression.values.first.sort }.any?
+          instance.values.select { |k,v| k == keys && v.sort == values.sort }.any?
+        end
+      end
+
+      # returns any record with a a matching key-value pair
+      def self.where_any(expression:, model_name:)
+        values = expression.values.first
+        values = values.is_a?(Array) ? values : [values]
+        keys = expression.keys.first
+
+        self.load_all_tables(:model_name => model_name).select do |instance|
+          instance.values.select do |k,v|
+            k == keys &&
+            v - values != v # finds any overlapping values
+          end.any?
         end
       end
 

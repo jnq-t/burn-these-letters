@@ -39,6 +39,10 @@ class Dictionary
     ::Orm::Dsl::Interface.where(expression: expression, :model_name => MODEL_DIR_NAME)
   end
 
+  def self.where_any(expression)
+    ::Orm::Dsl::Interface.where_any(expression: expression, :model_name => MODEL_DIR_NAME)
+  end
+
   def self.list_all
     ::Orm::Dsl::Interface.list_all_tables(:model_name => MODEL_DIR_NAME)
   end
