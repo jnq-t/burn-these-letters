@@ -21,7 +21,8 @@ module Orm
         values = expression.values.first # DRY this up by abstracting the shared logic between this and where any
         keys = expression.keys.first
         self.load_all_tables(:model_name => model_name).select do |instance|
-          instance.values.select { |k,v| k == keys && v.sort == values.sort }.any?
+          instance.values.select { |k,v| k == keys && v.sort == values.sort }.any? ||
+            (keys.to_sym == :name && values == instance.name)
         end
       end
 

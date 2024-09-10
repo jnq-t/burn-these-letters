@@ -1,3 +1,5 @@
 **/db
 spec/temp.rb
 **text_assets
+Gemfile
+Gemfile.lock

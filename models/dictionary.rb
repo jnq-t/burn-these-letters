@@ -2,11 +2,12 @@ class Dictionary
   ##
   # files
   require_relative '../orm/dsl.rb'
-  require_relative '../helpers/key_symbolizer.rb'
+  require_relative '../helpers/definition_formatter.rb'
 
   ##
   # dependencies
   require 'active_support/inflector'
+  require 'pry'
 
   MODEL_DIR_NAME = self.name.demodulize.downcase.pluralize # TODO include this in the DSL via sometype of hook
 
@@ -14,7 +15,7 @@ class Dictionary
   # param Name (the name of your model and your table)
   def initialize(name:, values: {})
     @name = name
-    @values = KeySymbolizer.call(values)
+    @values = DefinitionFormatter.call(values)
   end
 
   attr_reader :name
@@ -35,6 +36,10 @@ class Dictionary
 
   def self.where(expression)
     ::Orm::Dsl::Interface.where(expression: expression, :model_name => MODEL_DIR_NAME)
+  end
+
+  def self.load_by_name(name)
+    self.where(:name => name).first
   end
 
   def self.where_any(expression)
@@ -82,20 +87,20 @@ class Dictionary
 
   ##
   # will overwrite existing definitions
-  def set_definition!(**definition)
-    KeySymbolizer.call(definition)
+  def set_definition!(definition)
+    definition = DefinitionFormatter.call(definition)
     values.merge!(definition)
     self
   end
 
-  def add_to_definition(**definition)
-    definition = KeySymbolizer.call(definition)
+  def add_to_definition(definition)
+    definition = DefinitionFormatter.call(definition)
     key = definition.keys.first
     unless keys.include? key
       puts "no definition matching that key found. Use #set_definition! instead."
       return self
     end
-    values[key] += definition.values
+    values[key] += definition.values.first # the formatted will automatically wrap them in an array
     self
   end
 
