@@ -42,7 +42,7 @@ scramble.by_sentence
   => "this is a longer sentence!  hello, moon! hello, world!"
   => "this is a longer sentence! hello, world!  hello, moon!"
   ```
-### Upload a text asset 
+### Load a text asset 
 If you want to scramble a longer text without worything about copy/pasting it, you can simply copy it into the `burn-these-letters-code/text_assets` folder! 
 ```
 cp ~/Documents/hello_world.txt text_assets/my_new_asset.txt
