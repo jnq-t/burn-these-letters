@@ -1,68 +1,22 @@
-class Scrambler
-  # API ID [String] (Your API ID to the Oxford English Dictionary API )
-  # API KEY [String] (Your API ID to the Oxford English Dictionary API)
-  ## https://developer.oxforddictionaries.com/documentation/getting_started
-
-  def initialize(api_id: nil, api_key: nil)
-    @api_id = api_id
-    @api_key = api_key
+class Scramble
+  require_relative '../models/dictionary.rb'
+  def initialize(text)
+    @text = text
   end
 
-  attr_reader :api_id, :api_key
+  attr_reader :text
 
-# params Text [String] (the complete text you wish to scramble)
-  def scramble(text: "")
-    if text.empty?
-      scrambler_interface
-    else
-      scramble_by_word(text)
-    end
-  end
 
-private
-
-  class Interface
-    def initialize(scrambler)
-      @scrambler = scrambler
+  def by_dictionary(dictionary)
+    groupings = dictionary.definitions.reduce([]) do |acc,(_,v)|
+      acc << v
+      acc
     end
 
-    def by_part_of_speech(text:)
-      if @scrambler.api_id.nil? || @scrambler.api_key.nil?
-        puts "you must provide OED Credentials to use the part of speech option"
-        return
-      end
-
-      @scrambler.send(:scramble_by_part_of_speech, text: text)
-    end
-
-    def by_custom_subgroup(text:, groupings:)
-      @scrambler.send(:scramble_by_custom_subgroup, text: text, groupings: groupings)
-    end
-
-    def by_sentence(text:)
-      @scrambler.send(:scramble_by_sentence, text: text)
-    end
+    by_custom_subgroup(groupings: groupings)
   end
 
-  def scrambler_interface
-    Interface.new(self)
-  end
-
-  def scramble_by_part_of_speech(text)
-    # TODO
-    # words = text.split(" ").select { |str| alphanumeric?(str) }
-
-    puts "this is still WIP. Until it's ready you can enter your own sorted list by parts of speech using the .by_custom_subgroup method"
-  end
-
-  def scramble_by_custom_subgroup(text:, groupings: [])
-    substrings = groupings.select { |a| a.first.split(" ").length > 1 }.flatten
-    words = get_words_with_punctuation(text, substrings: substrings)
-    map = arrays_to_map(groupings)
-    apply_map(map,words)
-  end
-
-  def scramble_by_sentence(text:)
+  def by_sentence
     delimiters = [".","!","?"]
     words_and_punctuation = text.split(/(\.|\?|!)/)
     words = words_and_punctuation.reject { |word| delimiters.include?(word) }
@@ -70,14 +24,16 @@ private
     apply_map(map, words_and_punctuation)
   end
 
-  def scramble_by_word(text)
-    words = get_words_with_punctuation(text)
+  def by_word
+    words = get_words_with_punctuation
     unique = words.uniq.reject do |str|
       str.match?(/[^a-zA-Z0-9]/) # excludes non-alphanumeric characters from the map
     end
     map = make_map(unique)
     apply_map(map,words)
   end
+
+private
 
   # helper methods
   #
@@ -97,6 +53,14 @@ private
     applied.join.lstrip.gsub("  ", " ") # some whitespace handling
   end
 
+  def by_custom_subgroup(groupings: [])
+    substrings = groupings.select { |a| a.first.split(" ").length > 1 }.flatten
+    words = get_words_with_punctuation(substrings: substrings)
+    map = arrays_to_map(groupings)
+    apply_map(map,words)
+  end
+
+
   # takes a list of lists, maps each one on istself, and then compbines them into one big map
   # the idea is that you can pass in lists that represent "subgroupings", like words grouped by their
   #parts of speech, and the output map will "respect" the sub-groupings
@@ -105,17 +69,17 @@ private
     arr_of_hashes.reduce({},:merge)
   end
 
-  def get_words_with_punctuation(text, substrings: [])
+  def get_words_with_punctuation(substrings: [])
     regex = Regexp.new("#{substring_exp(substrings)}([\\w'-]+|[[:punct:]]+)")
     text.scan(regex).map(&:compact).flatten
   end
-end
 
-def substring_exp(substrings_array)
-  return "" if substrings_array.empty?
+  def substring_exp(substrings_array)
+    return "" if substrings_array.empty?
 
-  sorted_substrings = substrings_array.sort_by(&:length).reverse
-  # Create a regex pattern that matches any of the substrings or the original tokenization
-  substring = sorted_substrings.map { |s| Regexp.escape(s) }.join('|')
-  "(#{substring})|"
+    sorted_substrings = substrings_array.sort_by(&:length).reverse
+    # Create a regex pattern that matches any of the substrings or the original tokenization
+    substring = sorted_substrings.map { |s| Regexp.escape(s) }.join('|')
+    "(#{substring})|"
+  end
 end
