@@ -155,10 +155,16 @@ Congratulations! You've scrambled using a custom dictionary!
 ### Dictionary ORM methods 
 
 `Dictionary.all` loads all dictioanries in the DB 
+
 `Dictionary.list_all` pulls all the dictionary names in the DB 
+
 `Dictionary.by_definition_key` loads all dictionaries that contain the given definition key (i.e. "nouns") 
+
 `Dictioanry.by_definition_value` loads all dictionaries that contain the given definition value (i.e. "moon")
-`Dictionary.where()` returns all dictioanries that exactly match the expression. For example `Dictionary.where(greetings: "hello") would load our dictioanry, while `Dictioanry.where(nouns: "moon")` would not. 
-`Dcitionary.where_any()` returns all dictionaries that match the expression, inlcuding incomplete matches. In this case `Dictionary.where(nouns: "moon")` would indeed find our dictionary. 
+
+`Dictionary.where()` returns all dictioanries that exactly match the expression. For example `Dictionary.where(greetings: "hello") would load our dictioanry, while `Dictioanry.where(nouns: "moon")` would not
+
+`Dcitionary.where_any()` returns all dictionaries that match the expression, inlcuding incomplete matches. In this case `Dictionary.where(nouns: "moon")` would indeed find our dictionary
+
 `Dictionary.first` loads the first dictioanry in the db 
 
