@@ -38,6 +38,10 @@ class Dictionary
     ::Orm::Dsl::Interface.where(expression: expression, :model_name => MODEL_DIR_NAME)
   end
 
+  def self.load_by_name(name)
+    self.where(:name => name).first
+  end
+
   def self.where_any(expression)
     ::Orm::Dsl::Interface.where_any(expression: expression, :model_name => MODEL_DIR_NAME)
   end
