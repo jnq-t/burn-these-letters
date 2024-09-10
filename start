@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require './scramble/scramble.rb'
+require 'irb'
+IRB.start
+
