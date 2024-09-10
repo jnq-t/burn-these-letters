@@ -162,7 +162,7 @@ Congratulations! You've scrambled using a custom dictionary!
 
 `Dictioanry.by_definition_value` loads all dictionaries that contain the given definition value (i.e. "moon")
 
-`Dictionary.where()` returns all dictioanries that exactly match the expression. For example `Dictionary.where(greetings: "hello") would load our dictioanry, while `Dictioanry.where(nouns: "moon")` would not
+`Dictionary.where()` returns all dictioanries that exactly match the expression. For example `Dictionary.where(greetings: "hello")` would load our dictioanry, while `Dictioanry.where(nouns: "moon")` would not
 
 `Dcitionary.where_any()` returns all dictionaries that match the expression, inlcuding incomplete matches. In this case `Dictionary.where(nouns: "moon")` would indeed find our dictionary
 
