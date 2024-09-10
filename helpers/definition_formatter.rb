@@ -1,4 +1,4 @@
-class KeySymbolizer
+class DefinitionFormatter
   def self.call(hash_or_key)
     return hash_or_key.to_sym if hash_or_key.respond_to?(:to_sym)
     raise "object canno't be symbolized" unless hash_or_key.is_a?(Hash)
