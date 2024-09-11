@@ -7,7 +7,6 @@ class Dictionary
   ##
   # dependencies
   require 'active_support/inflector'
-  require 'pry'
 
   MODEL_DIR_NAME = self.name.demodulize.downcase.pluralize # TODO include this in the DSL via sometype of hook
 

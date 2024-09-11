@@ -1,6 +1,5 @@
 describe 'DefinitionFormatter' do
   require_relative '../helpers/definition_formatter.rb'
-  require 'pry'
 
   subject { ::DefinitionFormatter }
 

@@ -6,7 +6,6 @@ module Orm
       require "json"
       require "yaml"
       require 'active_support/inflector'
-      require "pry"
 
       DB_VERSION = "0.0.1"
 
