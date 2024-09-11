@@ -11,10 +11,6 @@ class DefinitionFormatter
       acc.merge!(key => value)
       acc
     end
-    # formatted_keys_def.map do |k,v|
-    #   value = v.is_a?(String) ? [v] : v
-    #   [k,value]
-    # end
   end
 
 private
