@@ -1,4 +1,6 @@
-class Dictionary
+require_relative 'base' # need to require the class before we
+
+class Dictionary < Base
   ##
   # files
   require_relative '../orm/dsl.rb'
@@ -7,8 +9,6 @@ class Dictionary
   ##
   # dependencies
   require 'active_support/inflector'
-
-  MODEL_DIR_NAME = self.name.demodulize.downcase.pluralize # TODO include this in the DSL via sometype of hook
 
   ##
   # param Name (the name of your model and your table)
@@ -19,6 +19,30 @@ class Dictionary
 
   attr_reader :name
   attr_accessor :values
+
+  def self.where(expression)
+    super(expression)
+  end
+
+  def self.load_by_name(name)
+    super(name)
+  end
+
+  def self.where_any(expression)
+    super(expression)
+  end
+
+  def self.list_all
+    super
+  end
+
+  def self.all
+    super
+  end
+
+  def self.first
+    super
+  end
 
   ##
   # class methods
@@ -33,29 +57,6 @@ class Dictionary
     end
   end
 
-  def self.where(expression)
-    ::Orm::Dsl::Interface.where(expression: expression, :model_name => MODEL_DIR_NAME)
-  end
-
-  def self.load_by_name(name)
-    self.where(:name => name).first
-  end
-
-  def self.where_any(expression)
-    ::Orm::Dsl::Interface.where_any(expression: expression, :model_name => MODEL_DIR_NAME)
-  end
-
-  def self.list_all
-    ::Orm::Dsl::Interface.list_all_tables(:model_name => MODEL_DIR_NAME)
-  end
-
-  def self.all
-    ::Orm::Dsl::Interface.load_all_tables(:model_name => MODEL_DIR_NAME)
-  end
-
-  def self.first
-    self.all.first
-  end
 
   ##
   # loads the latest
@@ -112,10 +113,10 @@ class Dictionary
   # This should maybe be included in an adapter class that's inherited
   # Same thing with the initializer methods
   # Anything that's required for the DSL should be encapsulated
-  # maybe in a module that can be included in a model_base class and inhereted among all models
-  def model_dir_name
-    MODEL_DIR_NAME
-  end
+  # # maybe in a module that can be included in a model_base class and inhereted among all models
+  # def model_dir_name
+  #   MODEL_DIR_NAME
+  # end
 
   private
 
