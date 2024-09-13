@@ -10,10 +10,9 @@ class Base
     end
   end
 
-  def self.model_dir_name
-    raise "Not Implemented"
+  def initialize(name:)
+    @name = name
   end
-
 
   def self.where(expression)
     ::Orm::Dsl::Interface.where(expression: expression, :model_name => self.model_dir_name)
@@ -62,14 +61,22 @@ class Base
     ::Orm::Dsl::Interface.new(:model_instance => self)
   end
 
+  def values=(data_hash)
+    @values = data_hash
+  end
+
   ##
   # Abstract Methods
+
+  def self.model_dir_name
+    raise "Not Implemented"
+  end
 
   def values
     raise "Not Implemented"
   end
 
-  def values=()
+  def name
     raise "Not Implemented"
   end
 end

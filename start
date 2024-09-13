@@ -2,6 +2,7 @@
 
 require './models/scramble.rb'
 require './models/dictionary.rb'
+require './models/result.rb'
 require 'irb'
 IRB.start
 
