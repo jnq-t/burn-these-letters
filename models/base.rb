@@ -1,11 +1,12 @@
 class Base
+  require_relative '../orm/dsl'
   def self.inherited(klass)
     klass.singleton_class.define_method(:model_dir_name) do
       klass.name.demodulize.downcase.pluralize
     end
 
-    klass.singleton_class.define_method(:where) do
-      klass.name.demodulize.downcase.pluralize
+    klass.instance_eval do
+    ::Orm::Dsl::Interface.new(:model_instance => self)
     end
   end
 
@@ -36,5 +37,28 @@ class Base
 
   def self.first
     self.all.first
+  end
+
+  ##
+  # loads the latest
+  def load
+    interface.load
+  end
+
+  ##
+  # loads a specific backup
+  def load_backup(filename)
+    interface.load_backup(filename)
+  end
+
+  ##
+  # saves the current state
+  # param Message (message metadata for your dictionary. Think of this like a commit message)
+  def save(message: "")
+    interface.save(message)
+  end
+
+  def interface
+    ::Orm::Dsl::Interface.new(:model_instance => self)
   end
 end

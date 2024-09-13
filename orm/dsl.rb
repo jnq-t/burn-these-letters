@@ -5,6 +5,7 @@ module Orm
       # dependencies
       require "json"
       require "yaml"
+      require "pry"
       require 'active_support/inflector'
 
       DB_VERSION = "0.0.1"
@@ -65,6 +66,7 @@ module Orm
           puts "no files found for this dictionary"
           return
         end
+
         data = YAML.load_file("#{load_path}")
         set_attributes(data)
         model_instance
@@ -97,7 +99,7 @@ module Orm
       # file paths
 
       def path_to_model_dir
-        "./db/#{model_instance.model_dir_name}"
+        "./db/#{model_instance.class.model_dir_name}"
       end
 
       def path_to_table_dir

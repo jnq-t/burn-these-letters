@@ -3,8 +3,9 @@ require_relative 'base' # need to require the class before we
 class Dictionary < Base
   ##
   # files
-  require_relative '../orm/dsl.rb'
-  require_relative '../helpers/definition_formatter.rb'
+  require_relative '../orm/dsl'
+  require_relative '../helpers/definition_formatter'
+  require 'pry'
 
   ##
   # dependencies
@@ -20,32 +21,11 @@ class Dictionary < Base
   attr_reader :name
   attr_accessor :values
 
-  def self.where(expression)
-    super(expression)
-  end
-
-  def self.load_by_name(name)
-    super(name)
-  end
-
-  def self.where_any(expression)
-    super(expression)
-  end
-
-  def self.list_all
-    super
-  end
-
-  def self.all
-    super
-  end
-
-  def self.first
-    super
-  end
-
   ##
   # class methods
+  def self.foo
+    binding.pry
+  end
 
   def self.by_definition_key(key)
     self.all.select { |dict| dict.keys.include?(key) }
@@ -62,22 +42,10 @@ class Dictionary < Base
   # loads the latest
   def load
     return unless user_wants_to_continue?
-    interface.load
+    super
   end
 
   ##
-  # loads a specific backup
-  def load_backup(filename)
-    interface.load_backup(filename)
-  end
-
-  ##
-  # saves the current state
-  # param Message (message metadata for your dictionary. Think of this like a commit message)
-  def save(message: "")
-    interface.save(message)
-  end
-
   # returns the definitons that we actually use for scramlbing
   def definitions
     values_memo = values
@@ -162,9 +130,5 @@ class Dictionary < Base
 
   def method_missing(symbol)
     self.values[symbol].presence || "no definitions for '#{symbol}'. set definitions using #set_definition!"
-  end
-
-  def interface
-    ::Orm::Dsl::Interface.new(:model_instance => self)
   end
 end
