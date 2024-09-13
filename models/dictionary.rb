@@ -76,16 +76,6 @@ class Dictionary < Base
     values.keys
   end
 
-  ##
-  # TODO this method is required for the DSL integration
-  # This should maybe be included in an adapter class that's inherited
-  # Same thing with the initializer methods
-  # Anything that's required for the DSL should be encapsulated
-  # # maybe in a module that can be included in a model_base class and inhereted among all models
-  # def model_dir_name
-  #   MODEL_DIR_NAME
-  # end
-
   private
 
   def user_wants_to_continue?

@@ -61,4 +61,15 @@ class Base
   def interface
     ::Orm::Dsl::Interface.new(:model_instance => self)
   end
+
+  ##
+  # Abstract Methods
+
+  def values
+    raise "Not Implemented"
+  end
+
+  def values=()
+    raise "Not Implemented"
+  end
 end

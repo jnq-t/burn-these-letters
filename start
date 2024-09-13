@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-require './scramble/scramble.rb'
+require './models/scramble.rb'
+require './models/dictionary.rb'
 require 'irb'
 IRB.start
 

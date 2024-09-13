@@ -1,12 +1,13 @@
-class Scramble
-  require_relative '../models/dictionary.rb'
-  ACCEPTED_FILE_EXTENSIONS = ["txt"]
-  def initialize(text)
+require_relative 'base'
+
+class Scramble < Base
+  def initialize(text: "", name:)
     @text = text
+    @name = name
     check_for_asset
   end
 
-  attr_reader :text
+  attr_reader :text, :name
 
   def by_dictionary(dictionary)
     groupings = dictionary.definitions.reduce([]) do |acc,(_,v)|
@@ -34,12 +35,24 @@ class Scramble
     apply_map(map,words)
   end
 
+  def values
+    {
+      :text => @text
+    }
+  end
+
+  def values=(data_hash)
+    @text = data_hash[:text]
+  end
+
 private
 
   ##
   # initialization
 
   def check_for_asset
+    return unless @text.present?
+
     asset_path ="text_assets/#{@text}"
     @text = File.read(asset_path) if File.exists?(asset_path)
   end
