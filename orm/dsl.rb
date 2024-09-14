@@ -139,7 +139,17 @@ module Orm
         Dir.mkdir(path_to_table_dir) unless Dir.exist?(path_to_table_dir)
       end
 
+      ##
+      # idea for multiple aggregate records on the same day, still buggy
+      #
       def create_aggregate_save_dir
+        Dir.mkdir(path_to_aggregate_save_dir) unless Dir.exist?(path_to_aggregate_save_dir)
+        make_time_stamp_records_dir
+      end
+
+      def make_time_stamp_records_dir
+        time = Time.now.to_s.split[1]
+        @path_to_aggregate_save_dir += "/" + time
         Dir.mkdir(path_to_aggregate_save_dir) unless Dir.exist?(path_to_aggregate_save_dir)
       end
 
