@@ -57,8 +57,8 @@ class Base
     interface.save(message)
   end
 
-  def save_multiples(message: "", postfix: 0)
-    interface.save_multiples(message, postfix)
+  def save_multiples(postfix)
+    interface.save_multiples(postfix)
   end
 
   def interface

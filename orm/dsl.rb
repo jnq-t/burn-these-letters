@@ -58,11 +58,13 @@ module Orm
 
       def save(message)
         ensure_file_structure
-        write_files(message,0)
+        write_files(message)
       end
 
-      def save_multiples(message, postfix)
-        write_files(message, postfix)
+      def save_multiples(postfix)
+        ensure_file_structure
+        create_aggregate_save_dir
+        write_aggregate(postfix)
       end
 
       def load
@@ -118,6 +120,10 @@ module Orm
         "#{path_to_table_dir}/backups"
       end
 
+      def path_to_aggregate_save_dir
+        @path_to_aggregate_save_dir ||= "#{path_to_table_dir}/#{Time.now.to_s.split.first}"
+      end
+
       ##
       # file structure
 
@@ -133,15 +139,16 @@ module Orm
         Dir.mkdir(path_to_table_dir) unless Dir.exist?(path_to_table_dir)
       end
 
+      def create_aggregate_save_dir
+        Dir.mkdir(path_to_aggregate_save_dir) unless Dir.exist?(path_to_aggregate_save_dir)
+      end
+
       def create_backup_dir
         path = "#{path_to_table_dir}/backups"
         Dir.mkdir(path) unless Dir.exist?(path)
       end
 
-      ##
-      # I/O
-
-      def write_files(message,postfix)
+      def build_save_headers(message)
         headers = {
           "metadata" =>
             {
@@ -152,8 +159,16 @@ module Orm
         headers["metadata"].merge("message" => message) if message.present?
 
         # overwrite main file
-        values = headers.merge model_instance.values
-        filename = postfix.positive? ? "model_instance.name(#{postfix})" : model_instance.name
+        headers
+      end
+
+      ##
+      # I/O
+
+      def write_files(message)
+        filename = model_instance.name
+        values = build_save_headers(message).merge model_instance.values
+
         File.open("#{path_to_table_dir}/#{filename}.yml", 'w') do |file|
           file.write(values.to_yaml)
         end
@@ -165,6 +180,16 @@ module Orm
         end
 
         find_table # return the table from memory.
+      end
+
+      def write_aggregate(postfix)
+        values = build_save_headers("").merge model_instance.values
+        filename = "#{model_instance.name}(#{postfix})"
+
+        write_path = "#{path_to_aggregate_save_dir}/#{filename}"
+        File.open("#{write_path}.yml", 'w') do |file|
+          file.write(values.to_yaml)
+        end
       end
     end
   end

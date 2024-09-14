@@ -24,7 +24,7 @@ class Result < Base
     raise "No associated scramble found" unless scramble_instance
     n.times.with_index do |i|
       result = scramble_instance.public_send "by_#{by}".to_sym
-      self.class.new(:name => belongs_to, :result => result).save_multiples(postfix: i)
+      self.class.new(:name => belongs_to, :result => result).save_multiples(i)
     end
   end
 
