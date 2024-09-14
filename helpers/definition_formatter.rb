@@ -5,7 +5,7 @@ class DefinitionFormatter
     raise "object can't be symbolized" unless definition.is_a?(Hash)
     return definition if self.correctly_formatted?
 
-    formatted_keys_def = definition.reduce({}) do |acc, (k,v)|
+    definition.reduce({}) do |acc, (k,v)|
       key = k.respond_to?(:to_sym) ? k.to_sym : k
       value = v.is_a?(String) ? [v] : v
       acc.merge!(key => value)
