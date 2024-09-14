@@ -45,6 +45,9 @@ class Scramble < Base
     @text = data_hash[:text]
   end
 
+  def results
+  end
+
 private
 
   ##

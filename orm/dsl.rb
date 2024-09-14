@@ -58,7 +58,11 @@ module Orm
 
       def save(message)
         ensure_file_structure
-        write_files(message)
+        write_files(message,0)
+      end
+
+      def save_multiples(message, postfix)
+        write_files(message, postfix)
       end
 
       def load
@@ -137,7 +141,7 @@ module Orm
       ##
       # I/O
 
-      def write_files(message)
+      def write_files(message,postfix)
         headers = {
           "metadata" =>
             {
@@ -149,7 +153,8 @@ module Orm
 
         # overwrite main file
         values = headers.merge model_instance.values
-        File.open("#{path_to_table_dir}/#{model_instance.name}.yml", 'w') do |file|
+        filename = postfix.positive? ? "model_instance.name(#{postfix})" : model_instance.name
+        File.open("#{path_to_table_dir}/#{filename}.yml", 'w') do |file|
           file.write(values.to_yaml)
         end
 

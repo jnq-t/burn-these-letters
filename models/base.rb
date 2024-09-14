@@ -57,6 +57,10 @@ class Base
     interface.save(message)
   end
 
+  def save_multiples(message: "", postfix: 0)
+    interface.save_multiples(message, postfix)
+  end
+
   def interface
     ::Orm::Dsl::Interface.new(:model_instance => self)
   end
