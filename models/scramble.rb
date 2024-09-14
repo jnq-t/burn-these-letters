@@ -69,13 +69,15 @@ private
   end
 
   # iterates through the list of words and transforms them into their randomly mapped counterpart
+  # TODO ensure an intermediate state
   def apply_map(map, words)
     applied = words.reduce([]) do |acc, word|
       map_value = map[word]
-      acc << (!map_value.nil? ? " " + map_value : word).downcase
+      acc << (!map_value.nil? ? map_value : word).downcase
       acc
     end
-    applied.join.lstrip.gsub("  ", " ") # some whitespace handling
+    binding.pry
+    applied.join(" ")
   end
 
   def by_custom_subgroup(groupings: [])
@@ -95,7 +97,12 @@ private
   end
 
   def get_words_with_punctuation(substrings: [])
-    regex = Regexp.new("#{substring_exp(substrings)}([\\w'-]+|[[:punct:]]+)")
+    # regex = Regexp.new("#{substring_exp(substrings)}([\\w'-]+|[[:punct:]]+)")
+    word_pattern = '[\\w\'-]+'
+    punctuation_pattern = '[[:punct:]]+'
+
+    regex = Regexp.new("#{substring_exp(substrings)}(#{word_pattern}|#{punctuation_pattern})")
+
     text.scan(regex).map(&:compact).flatten
   end
 
